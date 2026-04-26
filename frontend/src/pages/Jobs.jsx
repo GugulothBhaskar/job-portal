@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaMapMarkerAlt, FaRupeeSign, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../api/apiConfig";
 import { getSavedJobs, saveJob, unsaveJob } from "../api/savedJobsService";
 import "./Jobs.css";
 
@@ -23,7 +24,7 @@ const Jobs = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/api/jobs");
+      const response = await axios.get(`${API_BASE_URL}/api/jobs`);
       setJobs(response.data);
     } catch (error) {
       console.error("Error fetching jobs:", error);

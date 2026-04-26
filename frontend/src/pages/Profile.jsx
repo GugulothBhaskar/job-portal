@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../api/apiConfig";
 import "../pages/Profile.css";
 const defaultProfilePic = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -28,7 +29,7 @@ const Profile = () => {
   const fetchProfile = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8081/users/profile/${email}`,
+        `${API_BASE_URL}/users/profile/${email}`,
   {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -72,7 +73,7 @@ const Profile = () => {
   const updateProfile = async () => {
     try {
       await axios.post(
-  "http://localhost:8081/users/profile/update",
+  `${API_BASE_URL}/users/profile/update`,
   {
     email,
     ...profile,
@@ -112,7 +113,7 @@ const Profile = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8081/users/upload-profile-pic",
+        `${API_BASE_URL}/users/upload-profile-pic`,
         formData,
         {
           headers: {
@@ -169,7 +170,7 @@ const Profile = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8081/users/upload-resume",
+        `${API_BASE_URL}/users/upload-resume`,
         formData,
         {
           headers: {

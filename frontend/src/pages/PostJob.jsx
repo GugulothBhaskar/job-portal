@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../api/apiConfig";
 import "./PostJob.css";
 
 const PostJob = () => {
@@ -39,7 +40,7 @@ const PostJob = () => {
       setLoading(true);
 
       await axios.post(
-        "http://localhost:8081/api/recruiter/jobs",
+        `${API_BASE_URL}/api/recruiter/jobs`,
         formData,
         {
           headers: {

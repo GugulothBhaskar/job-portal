@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaMapMarkerAlt, FaRupeeSign, FaArrowLeft } from "react-icons/fa";
+import { API_BASE_URL } from "../api/apiConfig";
 import "./JobDetails.css";
 
 const JobDetails = () => {
@@ -12,7 +13,7 @@ const JobDetails = () => {
   const [applied, setApplied] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:8081/api/jobs/${id}`)
+    fetch(`${API_BASE_URL}/api/jobs/${id}`)
       .then(res => {
         if (!res.ok) {
           throw new Error("Failed to fetch job details");
@@ -25,7 +26,7 @@ const JobDetails = () => {
     const authToken = localStorage.getItem("token");
 
     if (authToken) {
-      fetch("http://localhost:8081/api/applications/my-applications", {
+      fetch(`${API_BASE_URL}/api/applications/my-applications`, {
         headers: {
           "Authorization": `Bearer ${authToken}`
         }
@@ -55,7 +56,7 @@ const JobDetails = () => {
       return;
     }
 
-    fetch(`http://localhost:8081/api/applications/apply/${id}`, {
+    fetch(`${API_BASE_URL}/api/applications/apply/${id}`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${authToken}`
@@ -112,11 +113,11 @@ const JobDetails = () => {
         
         <div className="top-section">
           <img
-            src={`http://localhost:8081/logos/${job.company.toLowerCase().replace(/\s+/g, "")}.jpg`}
+            src={`${API_BASE_URL}/logos/${job.company.toLowerCase().replace(/\s+/g, "")}.jpg`}
             alt={job.company}
             className="company-logo"
             onError={(e) => {
-              e.target.src = "http://localhost:8081/logos/default.jpg";
+              e.target.src = `${API_BASE_URL}/logos/default.jpg`;
             }}
           />
 
