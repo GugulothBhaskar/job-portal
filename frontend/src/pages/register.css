@@ -1,0 +1,167 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0f172a, #1e3a8a, #2563eb);
+  padding: 20px;
+}
+
+.register-container {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 18px;
+  padding: 35px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.register-header h2 {
+  font-size: 30px;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.register-header p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.register-form {
+  width: 100%;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.input-group input:focus {
+  border-color: #2563eb;
+}
+
+.role-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.role-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  text-align: center;
+  position: relative;
+}
+
+.role-card input {
+  display: none;
+}
+
+.role-card span {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.role-card small {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.role-card.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 14px;
+  background: #2563eb;
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 8px;
+}
+
+.register-btn:hover {
+  background: #1d4ed8;
+}
+
+.register-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.msg {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.success {
+  color: green;
+}
+
+.error {
+  color: red;
+}
+
+.login-link {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.login-link a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+  .register-container {
+    padding: 25px;
+  }
+
+  .role-options {
+    grid-template-columns: 1fr;
+  }
+}

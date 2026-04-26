@@ -1,0 +1,37 @@
+.card {
+  background: linear-gradient(135deg, #8e44ad, #3498db);
+  color: white;
+  padding: 25px;
+  border-radius: 8px;
+  text-align: center;
+  position: relative;
+  min-height: 120px;
+}
+
+.card:nth-child(2) {
+  background: linear-gradient(135deg, #9b59b6, #2980b9);
+}
+
+.card:nth-child(3) {
+  background: linear-gradient(135deg, #3498db, #1abc9c);
+}
+
+.card:nth-child(4) {
+  background: linear-gradient(135deg, #2980b9, #16a085);
+}
+
+.card-icon {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.card h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.card h2 {
+  margin-top: 10px;
+  font-size: 28px;
+}

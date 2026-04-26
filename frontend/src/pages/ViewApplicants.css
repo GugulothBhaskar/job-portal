@@ -1,0 +1,144 @@
+.view-applicants {
+  padding: 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.header-row h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.back-btn,
+.select-btn,
+.review-btn,
+.reject-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.back-btn {
+  background: #eef2ff;
+}
+
+.applicant-list {
+  display: grid;
+  gap: 16px;
+}
+
+.applicant-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.applicant-card:hover {
+  transform: translateY(-2px);
+  transition: 0.2s ease;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+}
+
+.applicant-info h3 {
+  margin: 0 0 8px;
+}
+
+.applicant-info p {
+  margin: 6px 0;
+  color: #4b5563;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 180px;
+}
+
+.select-btn {
+  background: #16a34a;
+  color: white;
+}
+
+.review-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.reject-btn {
+  background: #dc2626;
+  color: white;
+}
+
+.select-btn:disabled,
+.review-btn:disabled,
+.reject-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.empty-state,
+.loading,
+.error {
+  padding: 24px 0;
+}
+
+@media (max-width: 768px) {
+  .applicant-card {
+    flex-direction: column;
+  }
+
+  .action-buttons {
+    min-width: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+.status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status.applied {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.status.reviewed {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status.selected {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status.rejected {
+  background: #fee2e2;
+  color: #b91c1c;
+}

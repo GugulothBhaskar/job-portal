@@ -1,0 +1,186 @@
+* {
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f3f6f9;
+}
+
+/* Container */
+.myapps-container {
+  max-width: 900px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+/* Title */
+.myapps-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.filter-btn.active {
+  background: #0a66c2;
+  color: white;
+  border-color: #0a66c2;
+}
+
+/* Card */
+.app-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.app-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* Left */
+.app-left {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title */
+.job-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0a66c2;
+}
+
+/* Company */
+.company {
+  font-size: 14px;
+  color: #444;
+  margin-top: 4px;
+}
+
+/* Location */
+.location {
+  font-size: 13px;
+  color: #777;
+  margin-top: 3px;
+}
+
+.applied-at {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 6px;
+}
+
+/* Right */
+.app-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Status */
+.status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.applied {
+  background: #e3f2fd;
+  color: #1a73e8;
+}
+
+.shortlisted {
+  background: #e6f4ea;
+  color: #2e7d32;
+}
+
+.reviewed {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.selected {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.rejected {
+  background: #fdecea;
+  color: #d32f2f;
+}
+
+/* Button */
+.view-btn {
+  background: #0a66c2;
+  color: white;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.view-btn:hover {
+  background: #004182;
+}
+
+.save-btn {
+  background: #e5e7eb;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.save-btn.saved {
+  background: #16a34a;
+  color: white;
+}
+
+.job-deleted {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b91c1c;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+/* Empty */
+.no-data {
+  text-align: center;
+  padding: 30px;
+  color: #888;
+}
