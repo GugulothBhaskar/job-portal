@@ -1,7 +1,9 @@
 package com.bhaskar.jobportal.config;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,6 +18,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Value("${app.cors.allowed-origins:http://localhost:5173,http://127.0.0.1:5173,https://job-portal-seven-red.vercel.app}")
+    private String allowedOrigins;
+
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -28,6 +33,7 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
+.requestMatchers(HttpMethod.GET, "/", "/health", "/test").permitAll()
 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
 .requestMatchers("/users/register", "/users/login").permitAll()
@@ -66,14 +72,11 @@ public class SecurityConfig {
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-        
 
-        config.setAllowedOrigins(List.of(
-        "http://localhost:5173",      // local dev
-        "http://127.0.0.1:5173"    // local dev alt
-        // "https://yourdomain.com",     // production frontend
-        // "https://www.yourdomain.com"  // optional www
-    ));
+        config.setAllowedOrigins(Arrays.stream(allowedOrigins.split(","))
+            .map(String::trim)
+            .filter(origin -> !origin.isBlank())
+            .toList());
         config.setAllowedMethods(
                 List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

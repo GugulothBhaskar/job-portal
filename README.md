@@ -25,3 +25,8 @@ mvn spring-boot:run
 cd frontend
 npm install
 npm run dev
+
+### Frontend Environment
+Create a `frontend/.env` file with:
+
+VITE_API_URL=https://job-portal-backend-cbhg.onrender.com
