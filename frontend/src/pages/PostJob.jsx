@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../api/apiConfig";
-import "./PostJob.css";
+import "./postjob.css";
 
 const PostJob = () => {
   const navigate = useNavigate();
