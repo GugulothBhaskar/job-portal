@@ -28,12 +28,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.bhaskar.jobportal.dto.LoginRequest;
 import com.bhaskar.jobportal.model.User;
 import com.bhaskar.jobportal.model.UserProfile;
 import com.bhaskar.jobportal.repository.UserRepository;
 import com.bhaskar.jobportal.util.JwtUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @RestController
@@ -124,7 +127,7 @@ public Object loginUser(@RequestBody LoginRequest request) {
 }
 
 @GetMapping("/profile/{email}")
-public Object getProfile(@PathVariable String email) {
+public Object getProfile(@PathVariable String email, HttpServletRequest request) {
 
     Optional<User> userOpt = userRepository.findByEmail(email);
 
@@ -138,7 +141,7 @@ public Object getProfile(@PathVariable String email) {
     Map<String, Object> response = new HashMap<>();
     response.put("name", user.getName());
     response.put("email", user.getEmail());
-    response.put("profilePic", user.getProfilePic());
+    response.put("profilePic", normalizeFileUrl(user.getProfilePic(), request));
     response.put("headline", profile != null ? profile.getHeadline() : null);
     response.put("phone", profile != null ? profile.getPhone() : null);
     response.put("location", profile != null ? profile.getLocation() : null);
@@ -147,14 +150,14 @@ public Object getProfile(@PathVariable String email) {
     response.put("education", profile != null ? profile.getEducation() : null);
     response.put("projects", profile != null ? profile.getProjects() : null);
     response.put("about", profile != null ? profile.getAbout() : null);
-    response.put("resumeUrl", user.getResumeUrl());
+    response.put("resumeUrl", normalizeFileUrl(user.getResumeUrl(), request));
     response.put("profileCompletion", calculateProfileCompletion(user));
 
     return response;
 }
 
 @PostMapping(value = "/upload-resume", consumes = "multipart/form-data")
-public ResponseEntity<?> uploadResume(@RequestParam("resume") MultipartFile file) {
+public ResponseEntity<?> uploadResume(@RequestParam("resume") MultipartFile file, HttpServletRequest request) {
     try {
         String currentUserEmail = SecurityContextHolder
                 .getContext()
@@ -196,7 +199,7 @@ public ResponseEntity<?> uploadResume(@RequestParam("resume") MultipartFile file
         Path path = Paths.get(uploadDir, fileName);
         Files.write(path, file.getBytes());
 
-        String resumeUrl = "http://localhost:8081/uploads/" + fileName;
+        String resumeUrl = buildPublicFileUrl(fileName, request);
 
         User user = userOpt.get();
         user.setResumeUrl(resumeUrl);
@@ -317,7 +320,8 @@ public ResponseEntity<Map<String, String>> handleException(Exception ex) {
 @PostMapping("/upload-profile-pic")
 public ResponseEntity<?> uploadProfilePic(
         @RequestParam("profilePic") MultipartFile file,
-        @RequestParam("email") String email
+    @RequestParam("email") String email,
+    HttpServletRequest request
 ) {
     try {
         Optional<User> userOpt = userRepository.findByEmail(email);
@@ -329,8 +333,7 @@ public ResponseEntity<?> uploadProfilePic(
 
         // ✅ DELETE OLD IMAGE
         if (user.getProfilePic() != null) {
-            String oldImagePath = user.getProfilePic()
-                    .replace("http://localhost:8081/uploads/", "");
+            String oldImagePath = extractUploadFileName(user.getProfilePic());
 
             String fullPath = System.getProperty("user.dir") + "/uploads/" + oldImagePath;
 
@@ -351,7 +354,7 @@ public ResponseEntity<?> uploadProfilePic(
 
         Files.write(path, file.getBytes());
 
-        String imageUrl = "http://localhost:8081/uploads/" + fileName;
+        String imageUrl = buildPublicFileUrl(fileName, request);
 
         user.setProfilePic(imageUrl);
         userRepository.save(user);
@@ -380,6 +383,38 @@ private int calculateProfileCompletion(User user) {
 
         return Math.round((completedFields * 100f) / 9f);
     }
+
+private String buildPublicFileUrl(String fileName, HttpServletRequest request) {
+    return ServletUriComponentsBuilder.fromRequestUri(request)
+            .replacePath("/uploads/" + fileName)
+            .replaceQuery(null)
+            .build()
+            .toUriString();
+}
+
+private String normalizeFileUrl(String storedUrl, HttpServletRequest request) {
+    if (storedUrl == null || storedUrl.isBlank()) {
+        return storedUrl;
+    }
+
+    if (storedUrl.contains("/uploads/")) {
+        String fileName = extractUploadFileName(storedUrl);
+        if (fileName != null && !fileName.isBlank()) {
+            return buildPublicFileUrl(fileName, request);
+        }
+    }
+
+    return storedUrl;
+}
+
+private String extractUploadFileName(String url) {
+    if (url == null || url.isBlank()) {
+        return "";
+    }
+
+    int lastSlash = url.lastIndexOf('/');
+    return lastSlash >= 0 ? url.substring(lastSlash + 1) : url;
+}
 }
 
 
