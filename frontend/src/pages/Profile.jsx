@@ -25,6 +25,7 @@ const Profile = () => {
     projects: [],
     profilePic: "", // ✅ Added profilePic field
     resumeUrl: "",
+    profileCompletion: 0,
   });
 
   const [isEditing, setIsEditing] = useState(false); // Add state for editing mode
@@ -53,6 +54,7 @@ const Profile = () => {
           email: res.data.email || "",
           profilePic: normalizeMediaUrl(res.data.profilePic || ""),
           resumeUrl: normalizeMediaUrl(res.data.resumeUrl || ""),
+          profileCompletion: Number(res.data.profileCompletion) || 0,
           skills: res.data.skills || [],
           experience: (res.data.experience || []).map((exp) => ({
             role: exp?.role || "",
@@ -93,6 +95,7 @@ const Profile = () => {
   }
 );
       alert("Profile updated!");
+      await fetchProfile();
       setIsEditing(false);
     } catch (err) {
       console.error("Error updating profile:", err.response?.data || err.message);
@@ -138,6 +141,7 @@ const Profile = () => {
       }));
 
       alert("Image uploaded successfully!");
+      await fetchProfile();
 
     } catch (err) {
       console.error("UPLOAD ERROR:", err.response?.data || err.message);
@@ -168,6 +172,7 @@ const Profile = () => {
       }));
 
       alert("Profile picture removed.");
+      await fetchProfile();
     } catch (err) {
       console.error("REMOVE IMAGE ERROR:", err.response?.data || err.message);
       alert("Failed to remove profile picture.");
@@ -221,6 +226,7 @@ const Profile = () => {
       }));
 
       setResumeMessage(`${getResumeFileName(normalizeMediaUrl(res.data.resumeUrl))} uploaded successfully.`);
+      await fetchProfile();
       e.target.value = "";
     } catch (err) {
       const responseData = err.response?.data;
@@ -256,6 +262,9 @@ const Profile = () => {
     (profile.resumeUrl ? 1 : 0);
 
   const percentage = Math.round((completion / 9) * 100);
+  const profileStatus = Number.isFinite(profile.profileCompletion)
+    ? profile.profileCompletion
+    : percentage;
 
   return (
     <div className="profile-page">
@@ -826,14 +835,14 @@ const Profile = () => {
         {/* Updated Profile Completion section to use consistent layout */}
         <div className="profile-section">
           <div className="section-header">
-            <h2>Profile Completion</h2>
+            <h2>Profile Status</h2>
           </div>
 
           <div className="section-content">
-            <p>{percentage}% completed</p>
+            <p>{profileStatus}% completed</p>
 
             <div className="progress-bar">
-              <div style={{ width: `${percentage}%` }}></div>
+              <div style={{ width: `${profileStatus}%` }}></div>
             </div>
           </div>
         </div>

@@ -519,6 +519,69 @@ textarea {
   background-color: #005f8d;
 }
 
+@media (max-width: 992px) {
+  .profile-card {
+    width: min(900px, calc(100% - 24px));
+    margin: -90px auto 24px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cover-section {
+    height: 150px;
+  }
+
+  .profile-card {
+    width: calc(100% - 20px);
+    margin: -68px auto 20px;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .profile-info h1 {
+    font-size: 22px;
+  }
+
+  .profile-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .edit-btn {
+    width: 100%;
+    padding: 10px 14px;
+  }
+
+  .upload-btn,
+  .remove-upload-btn {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .timeline {
+    padding-left: 14px;
+  }
+
+  .exp-card {
+    margin-left: 6px;
+  }
+
+  .skill-input-container {
+    flex-direction: column;
+  }
+
+  .add-skill-button {
+    width: 100%;
+  }
+}
+
 .skill-suggestions {
   display: flex;
   flex-wrap: wrap;
