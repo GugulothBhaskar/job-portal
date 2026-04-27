@@ -58,6 +58,23 @@
   cursor: pointer;
 }
 
+.remove-upload-btn {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.remove-upload-btn:hover {
+  background: #b91c1c;
+}
+
 /* Info */
 .profile-info {
   flex: 1;

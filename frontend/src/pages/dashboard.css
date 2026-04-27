@@ -92,6 +92,7 @@
 @media (max-width: 768px) {
   .dashboard-main {
     padding: 16px;
+    padding-top: 74px;
   }
 
   .dashboard-hero {

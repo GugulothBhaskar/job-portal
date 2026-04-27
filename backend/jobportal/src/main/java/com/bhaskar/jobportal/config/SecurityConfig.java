@@ -39,7 +39,7 @@ public class SecurityConfig {
 .requestMatchers("/users/register", "/users/login").permitAll()
 .requestMatchers(HttpMethod.POST, "/users/upload-resume").hasRole("USER")
 
-.requestMatchers("/logos/**", "/uploads/**").permitAll()
+.requestMatchers("/logos/**", "/uploads/**", "/users/media/**").permitAll()
 
 .requestMatchers("/api/jobs", "/api/jobs/**").permitAll()
 

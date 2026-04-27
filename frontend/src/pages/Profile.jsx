@@ -4,6 +4,13 @@ import { API_BASE_URL } from "../api/apiConfig";
 import "../pages/Profile.css";
 const defaultProfilePic = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
+const normalizeMediaUrl = (url) => {
+  if (!url || typeof url !== "string") return "";
+  return url.includes("/uploads/")
+    ? url.replace("/uploads/", "/users/media/")
+    : url;
+};
+
 const Profile = () => {
   const [profile, setProfile] = useState({
     name: "",
@@ -44,8 +51,8 @@ const Profile = () => {
           location: res.data.location || "",
           about: res.data.about || "",
           email: res.data.email || "",
-          profilePic: res.data.profilePic || "",
-          resumeUrl: res.data.resumeUrl || "",
+          profilePic: normalizeMediaUrl(res.data.profilePic || ""),
+          resumeUrl: normalizeMediaUrl(res.data.resumeUrl || ""),
           skills: res.data.skills || [],
           experience: (res.data.experience || []).map((exp) => ({
             role: exp?.role || "",
@@ -127,7 +134,7 @@ const Profile = () => {
 
       setProfile((prev) => ({
         ...prev,
-        profilePic: res.data.imageUrl,
+        profilePic: normalizeMediaUrl(res.data.imageUrl),
       }));
 
       alert("Image uploaded successfully!");
@@ -135,6 +142,35 @@ const Profile = () => {
     } catch (err) {
       console.error("UPLOAD ERROR:", err.response?.data || err.message);
       alert("Upload failed");
+    }
+  };
+
+  const handleRemoveProfilePic = async () => {
+    const confirmed = window.confirm("Remove your profile picture?");
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await axios.post(
+        `${API_BASE_URL}/users/remove-profile-pic`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setProfile((prev) => ({
+        ...prev,
+        profilePic: "",
+      }));
+
+      alert("Profile picture removed.");
+    } catch (err) {
+      console.error("REMOVE IMAGE ERROR:", err.response?.data || err.message);
+      alert("Failed to remove profile picture.");
     }
   };
 
@@ -181,10 +217,10 @@ const Profile = () => {
 
       setProfile((prev) => ({
         ...prev,
-        resumeUrl: res.data.resumeUrl,
+        resumeUrl: normalizeMediaUrl(res.data.resumeUrl),
       }));
 
-      setResumeMessage(`${getResumeFileName(res.data.resumeUrl)} uploaded successfully.`);
+      setResumeMessage(`${getResumeFileName(normalizeMediaUrl(res.data.resumeUrl))} uploaded successfully.`);
       e.target.value = "";
     } catch (err) {
       const responseData = err.response?.data;
@@ -238,15 +274,36 @@ const Profile = () => {
               className="profile-picture"
               onError={(e) => {
                 e.target.onerror = null;
+                const rewritten = normalizeMediaUrl(e.target.src);
+                if (rewritten && rewritten !== e.target.src) {
+                  e.target.onerror = () => {
+                    e.target.onerror = null;
+                    e.target.src = defaultProfilePic;
+                  };
+                  e.target.src = rewritten;
+                  return;
+                }
                 e.target.src = defaultProfilePic;
               }}
             />
 
             {isEditing && (
-              <label className="upload-btn">
-                Change
-                <input type="file" hidden onChange={handleImageUpload} />
-              </label>
+              <>
+                <label className="upload-btn">
+                  Change
+                  <input type="file" hidden onChange={handleImageUpload} />
+                </label>
+
+                {profile.profilePic && (
+                  <button
+                    type="button"
+                    className="remove-upload-btn"
+                    onClick={handleRemoveProfilePic}
+                  >
+                    Remove
+                  </button>
+                )}
+              </>
             )}
           </div>
 

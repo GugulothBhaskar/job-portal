@@ -31,6 +31,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .toUri()
                 .toString();
 
+        // Directory resource locations must end with '/' for safe relative resolution.
+        if (!uploadLocation.endsWith("/")) {
+            uploadLocation = uploadLocation + "/";
+        }
+
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations(uploadLocation);
     }

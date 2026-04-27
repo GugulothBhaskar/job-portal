@@ -42,6 +42,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (path.startsWith("/logos/")
                 || path.startsWith("/uploads/")
+            || path.startsWith("/users/media/")
                 || path.startsWith("/public/")
                 || path.startsWith("/users/login")
                 || path.startsWith("/users/register")) {

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +45,8 @@ public class UserController {
     private final UserRepository userRepository;
     @Value("${jobportal.recruiter-registration-code:}")
     private String recruiterRegistrationCode;
+    @Value("${jobportal.upload-dir:${user.dir}/uploads}")
+    private String uploadDir;
 
     @Autowired
     private BCryptPasswordEncoder encoder;
@@ -187,16 +188,13 @@ public ResponseEntity<?> uploadResume(@RequestParam("resume") MultipartFile file
             return ResponseEntity.badRequest().body("Resume size must be 2MB or less");
         }
 
-        String uploadDir = System.getProperty("user.dir") + "/uploads/";
-        File dir = new File(uploadDir);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+        Path uploadPath = Path.of(uploadDir).toAbsolutePath().normalize();
+        Files.createDirectories(uploadPath);
 
         deleteExistingResumeFile(userOpt.get());
 
         String fileName = "resume_" + UUID.randomUUID() + ".pdf";
-        Path path = Paths.get(uploadDir, fileName);
+        Path path = uploadPath.resolve(fileName);
         Files.write(path, file.getBytes());
 
         String resumeUrl = buildPublicFileUrl(fileName, request);
@@ -224,7 +222,7 @@ private void deleteExistingResumeFile(User user) {
 
     try {
         String fileName = user.getResumeUrl().substring(user.getResumeUrl().lastIndexOf('/') + 1);
-        Path oldPath = Paths.get(System.getProperty("user.dir"), "uploads", fileName);
+        Path oldPath = Path.of(uploadDir).toAbsolutePath().normalize().resolve(fileName);
         Files.deleteIfExists(oldPath);
     } catch (IOException ignored) {
         // Keep the upload flow resilient if the old file is already gone.
@@ -335,9 +333,8 @@ public ResponseEntity<?> uploadProfilePic(
         if (user.getProfilePic() != null) {
             String oldImagePath = extractUploadFileName(user.getProfilePic());
 
-            String fullPath = System.getProperty("user.dir") + "/uploads/" + oldImagePath;
-
-            File oldFile = new File(fullPath);
+            Path fullPath = Path.of(uploadDir).toAbsolutePath().normalize().resolve(oldImagePath);
+            File oldFile = fullPath.toFile();
             if (oldFile.exists()) {
                 oldFile.delete();
                 System.out.println("Old image deleted: " + fullPath);
@@ -345,12 +342,11 @@ public ResponseEntity<?> uploadProfilePic(
         }
 
         // ✅ SAVE NEW IMAGE
-        String uploadDir = System.getProperty("user.dir") + "/uploads/";
-        File dir = new File(uploadDir);
-        if (!dir.exists()) dir.mkdirs();
+        Path uploadPath = Path.of(uploadDir).toAbsolutePath().normalize();
+        Files.createDirectories(uploadPath);
 
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path path = Paths.get(uploadDir, fileName);
+        Path path = uploadPath.resolve(fileName);
 
         Files.write(path, file.getBytes());
 
@@ -363,6 +359,41 @@ public ResponseEntity<?> uploadProfilePic(
 
     } catch (IOException e) {
         return ResponseEntity.status(500).body("Upload failed");
+    }
+}
+
+@PostMapping("/remove-profile-pic")
+public ResponseEntity<?> removeProfilePic() {
+    try {
+        String currentUserEmail = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        Optional<User> userOpt = userRepository.findByEmail(currentUserEmail);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        User user = userOpt.get();
+
+        if (user.getProfilePic() != null && !user.getProfilePic().isBlank()) {
+            String oldImagePath = extractUploadFileName(user.getProfilePic());
+            Path fullPath = Path.of(uploadDir).toAbsolutePath().normalize().resolve(oldImagePath).normalize();
+            Path basePath = Path.of(uploadDir).toAbsolutePath().normalize();
+
+            if (fullPath.startsWith(basePath)) {
+                Files.deleteIfExists(fullPath);
+            }
+        }
+
+        user.setProfilePic("");
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "Profile picture removed"));
+
+    } catch (IOException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to remove profile picture");
     }
 }
 
@@ -386,7 +417,7 @@ private int calculateProfileCompletion(User user) {
 
 private String buildPublicFileUrl(String fileName, HttpServletRequest request) {
     return ServletUriComponentsBuilder.fromRequestUri(request)
-            .replacePath("/uploads/" + fileName)
+            .replacePath("/users/media/" + fileName)
             .replaceQuery(null)
             .build()
             .toUriString();
@@ -397,14 +428,32 @@ private String normalizeFileUrl(String storedUrl, HttpServletRequest request) {
         return storedUrl;
     }
 
-    if (storedUrl.contains("/uploads/")) {
+    if (storedUrl.contains("/uploads/") || storedUrl.contains("/users/media/")) {
         String fileName = extractUploadFileName(storedUrl);
         if (fileName != null && !fileName.isBlank()) {
+            if (!isLocalUploadFilePresent(fileName)) {
+                return "";
+            }
             return buildPublicFileUrl(fileName, request);
         }
     }
 
     return storedUrl;
+}
+
+private boolean isLocalUploadFilePresent(String fileName) {
+    if (fileName == null || fileName.isBlank()) {
+        return false;
+    }
+
+    Path uploadPath = Path.of(uploadDir).toAbsolutePath().normalize().resolve(fileName).normalize();
+    Path basePath = Path.of(uploadDir).toAbsolutePath().normalize();
+
+    if (!uploadPath.startsWith(basePath)) {
+        return false;
+    }
+
+    return Files.exists(uploadPath) && Files.isRegularFile(uploadPath) && Files.isReadable(uploadPath);
 }
 
 private String extractUploadFileName(String url) {
